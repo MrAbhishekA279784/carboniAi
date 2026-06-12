@@ -99,11 +99,32 @@ export const useAppStore = create<AppState>((set, get) => ({
       
       if (unsubscribeUser) unsubscribeUser();
       
+      // Perform initial fetch to ensure store is hydrated immediately
+      const initialSnap = await getDoc(userRef);
+      if (initialSnap.exists()) {
+        const data = initialSnap.data();
+        set({ 
+          user: { 
+            ...INITIAL_USER, 
+            ...data, 
+            name: data.name || INITIAL_USER.name || "Eco Champion"
+          }, 
+          carbonData: data.carbonData || INITIAL_CARBON_DATA,
+          missions: data.missions || [],
+          achievements: data.achievements || DEFAULT_ACHIEVEMENTS,
+          habits: data.habits || DEFAULT_HABITS
+        });
+      }
+      
       unsubscribeUser = onSnapshot(userRef, (userSnap) => {
         if (userSnap.exists()) {
           const data = userSnap.data();
           set({ 
-            user: { ...INITIAL_USER, ...data.profile, ...data.stats }, 
+            user: { 
+              ...INITIAL_USER, 
+              ...data, 
+              name: data.name || INITIAL_USER.name || "Eco Champion"
+            }, 
             carbonData: data.carbonData || INITIAL_CARBON_DATA,
             missions: data.missions || [],
             achievements: data.achievements || DEFAULT_ACHIEVEMENTS,
@@ -116,7 +137,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       
       if (unsubscribeNotifications) unsubscribeNotifications();
 
-      // Fetch. activities once instead of real-time listener
+      // Fetch activities once instead of real-time listener
       const activitiesQuery = query(collection(db, `users/${uid}/activities`), orderBy('timestamp', 'desc'), limit(50));
       getDocs(activitiesQuery).then((snap) => {
         const activities = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Activity));
@@ -148,7 +169,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (auth.currentUser) {
       try {
         const userRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userRef, { profile: newUser });
+        await updateDoc(userRef, userUpdate);
       } catch (error) {
         handleFirestoreError(error, OperationType.UPDATE, `users/${auth.currentUser.uid}`);
       }
@@ -164,7 +185,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       
       if (auth.currentUser) {
         const userRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userRef, { 'profile.completedOnboarding': complete });
+        await updateDoc(userRef, { completedOnboarding: complete });
       }
 
       await get().updateCarbonData();
@@ -485,12 +506,9 @@ export const useAppStore = create<AppState>((set, get) => ({
       try {
         const userRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userRef, { 
-          'stats.xp': newXp,
-          'stats.level': newLevel,
-          'stats.ecoPoints': newEcoPoints,
-          'profile.xp': newXp,
-          'profile.level': newLevel,
-          'profile.ecoPoints': newEcoPoints
+          xp: newXp,
+          level: newLevel,
+          ecoPoints: newEcoPoints
         });
         
         // Update leaderboard
@@ -535,10 +553,8 @@ export const useAppStore = create<AppState>((set, get) => ({
          try {
            const userRef = doc(db, 'users', auth.currentUser.uid);
            await updateDoc(userRef, { 
-             'stats.streak': newStreak, 
-             'profile.streak': newStreak,
-             'stats.lastActivityDate': today,
-             'profile.lastActivityDate': today
+             streak: newStreak, 
+             lastActivityDate: today
            });
          } catch(e) {}
        }

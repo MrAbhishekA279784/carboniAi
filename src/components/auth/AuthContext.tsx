@@ -20,44 +20,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-
       if (firebaseUser) {
         try {
-          // Sync store
-          useAppStore.getState().syncWithFirebase(firebaseUser.uid);
-
           // Ensure user document exists in Firestore
           const userRef = doc(db, 'users', firebaseUser.uid);
           const userSnap = await getDoc(userRef);
 
           if (!userSnap.exists()) {
             await setDoc(userRef, {
-              profile: {
-                uid: firebaseUser.uid,
-                email: firebaseUser.email,
-                name: firebaseUser.displayName,
-                photoURL: firebaseUser.photoURL,
-                completedOnboarding: false,
-              },
-              stats: {
-                level: 1,
-                xp: 0,
-                ecoPoints: 0
-              },
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || "Eco Champion",
+              photoURL: firebaseUser.photoURL,
+              completedOnboarding: false,
+              level: 1,
+              xp: 0,
+              ecoPoints: 0,
               createdAt: serverTimestamp(),
               lastLogin: serverTimestamp(),
             }, { merge: true });
           } else {
             await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
           }
+
+          // Sync store
+          await useAppStore.getState().syncWithFirebase(firebaseUser.uid);
         } catch (error) {
           handleFirestoreError(error, OperationType.WRITE, `users/${firebaseUser.uid}`);
         }
       } else {
         useAppStore.getState().clearStore();
       }
+
+      setUser(firebaseUser);
+      setLoading(false);
     });
 
     return () => unsubscribe();

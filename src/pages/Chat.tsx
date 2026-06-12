@@ -54,17 +54,40 @@ export function Chat() {
         }),
       });
 
+      console.log("[Chat] response status:", response.status, "ok:", response.ok);
+      const contentType = response.headers.get("content-type");
+      console.log("[Chat] response content-type:", contentType);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("[Chat] Server error body:", errorText);
+        throw new Error(`Server returned ${response.status}: ${errorText.substring(0, 200)}`);
+      }
+
       const data = await response.json();
+      console.log("[Chat] response data keys:", Object.keys(data));
       if (data.text) {
         setMessages(prev => [...prev, { role: 'assistant', content: data.text }]);
       } else {
-        throw new Error("No response from AI");
+        throw new Error("No response from AI: missing 'text' field");
       }
     } catch (error) {
+      console.error("[Chat] handleSend error:", error);
       setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble connecting right now. Please try again later." }]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleReset = () => {
+    setMessages([
+      {
+        role: 'assistant',
+        content: `Hi ${user.name.split(' ')[0]}! 👋\nI'm your AI sustainability coach. How can I help you today?`
+      }
+    ]);
+    setInput("");
+    setIsLoading(false);
   };
 
   const suggestions = [
@@ -94,7 +117,7 @@ export function Chat() {
             </div>
           </div>
         </div>
-        <button className="p-2 hover:bg-neutral-50 rounded-full transition-colors">
+        <button onClick={handleReset} className="p-2 hover:bg-neutral-50 rounded-full transition-colors" aria-label="Reset chat">
           <RefreshCw size={20} className="text-neutral-400" />
         </button>
       </header>

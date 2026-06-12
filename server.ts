@@ -161,7 +161,7 @@ async function startServer() {
       };
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         config: {
           systemInstruction: `You are an AI Sustainability Coach for CARBONIQ. 
           Analyze the user's data and provide actionable, encouraging advice.
@@ -186,14 +186,32 @@ async function startServer() {
   app.post("/api/gemini/chat", async (req, res) => {
     try {
       const { messages, userProfile, carbonData, recentActivities, activeMissions } = req.body;
-      
+
+      console.log("[CHAT] Incoming request body keys:", Object.keys(req.body));
+      console.log("[CHAT] messages length:", messages?.length);
+      console.log("[CHAT] GEMINI_API_KEY loaded:", !!process.env.GEMINI_API_KEY, "length:", process.env.GEMINI_API_KEY?.length);
+
       // Sanitize the last user message of the history
       if (messages && messages.length > 0) {
         messages[messages.length - 1].content = sanitizeAIInput(messages[messages.length - 1].content);
+        console.log("[CHAT] Last message role:", messages[messages.length - 1].role, "content:", messages[messages.length - 1].content.substring(0, 100));
       }
 
+      const history = messages.slice(0, -1).map((m: any) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }]
+      }));
+      console.log("[CHAT] History length:", history.length);
+      if (history.length > 0) {
+        console.log("[CHAT] First history entry role:", history[0].role);
+        console.log("[CHAT] Last history entry role:", history[history.length - 1].role);
+      }
+
+      const lastMessageContent = messages[messages.length - 1].content;
+      console.log("[CHAT] Creating chat with model: gemini-2.5-flash");
+
       const chat = ai.chats.create({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         config: {
           systemInstruction: `You are EcoAgent AI, an expert sustainability coach.
           You help users understand and reduce their carbon footprint.
@@ -210,19 +228,26 @@ async function startServer() {
           - If asked about specific actions, refer to their current categories (Transport, Energy, etc).
           - Keep responses relatively brief (max 150 words) for mobile readability.`,
         },
-        history: messages.slice(0, -1).map((m: any) => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }]
-        }))
+        history
       });
 
+      console.log("[CHAT] Chat created, sending message...");
       const response = await chat.sendMessage({
-        message: messages[messages.length - 1].content
+        message: lastMessageContent
       });
+
+      console.log("[CHAT] Response received. Has candidates:", !!response.candidates);
+      console.log("[CHAT] response.text:", response.text ? response.text.substring(0, 200) : "UNDEFINED");
 
       res.json({ text: response.text });
     } catch (error: any) {
-      console.error("Gemini Chat Error:", error);
+      console.error("[CHAT] ERROR:", error.message);
+      console.error("[CHAT] Error stack:", error.stack);
+      console.error("[CHAT] Error name:", error.name);
+      console.error("[CHAT] Error status:", error.status);
+      if (error.error) {
+        console.error("[CHAT] Error detail:", JSON.stringify(error.error));
+      }
       res.status(500).json({ error: "Failed to connect to EcoAgent AI" });
     }
   });
@@ -234,7 +259,7 @@ async function startServer() {
       const sanitizedPrompt = sanitizeAIInput(prompt);
       
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         config: {
           systemInstruction: "You are a simulation analyzer for CARBONIQ. Analyze the what-if scenario based on the user's current footprint and profile. Provide a short, structured analysis of the impact. User Profile: " + JSON.stringify(userProfile) + " Current Footprint: " + currentFootprint + " kg CO2e. Respond in concise bullet points.",
         },
@@ -254,7 +279,7 @@ async function startServer() {
       const sanitizedPrompt = sanitizeAIInput(prompt);
       
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         contents: sanitizedPrompt,
         config: {
           tools: [{ googleSearch: {} }]

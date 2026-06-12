@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../components/auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Leaf, Shield, Zap, Globe, ArrowRight } from 'lucide-react';
 
 export const Login: React.FC = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && !loading) {
+      navigate('/');
+    }
+  }, [user, loading, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-from)_0%,_transparent_50%)] from-emerald-100/40">

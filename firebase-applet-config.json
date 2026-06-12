@@ -1,10 +1,9 @@
 {
-  "projectId": "autonomous-ruler-xkm1r",
-  "appId": "1:922446401036:web:139ce93f2877529d8ba829",
-  "apiKey": "AIzaSyBAQP6szdRIlXF-uYNmvdxozIr3jQx3sDA",
-  "authDomain": "autonomous-ruler-xkm1r.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-a767e0ea-8478-46bc-93d5-a6d15847d8cc",
-  "storageBucket": "autonomous-ruler-xkm1r.firebasestorage.app",
-  "messagingSenderId": "922446401036",
-  "measurementId": ""
+  "projectId": "carboniq-88086",
+  "appId": "1:125731289690:web:7eccbb4587fa452c9b3663",
+  "apiKey": "AIzaSyAfAy1EawgvYAsqv8gCdJskX6bgLHG3qN0",
+  "authDomain": "carboniq-88086.firebaseapp.com",
+  "storageBucket": "carboniq-88086.firebasestorage.app",
+  "messagingSenderId": "125731289690",
+  "measurementId": "G-LCE91M5R2Z"
 }

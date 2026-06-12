@@ -180,7 +180,10 @@ export function Onboarding() {
               </div>
               <Slider 
                 value={[form.watch("electricityUsage")]} 
-                onValueChange={(val) => form.setValue("electricityUsage", val[0])}
+                onValueChange={(val) => {
+                  const v = Array.isArray(val) ? val[0] : val;
+                  form.setValue("electricityUsage", v as number);
+                }}
                 max={1500} step={10} 
                 className="py-4"
               />
@@ -195,7 +198,10 @@ export function Onboarding() {
               </div>
               <Slider 
                 value={[form.watch("acUsage")]} 
-                onValueChange={(val) => form.setValue("acUsage", val[0])}
+                onValueChange={(val) => {
+                  const v = Array.isArray(val) ? val[0] : val;
+                  form.setValue("acUsage", v as number);
+                }}
                 max={24} step={1} 
                 className="py-4"
               />
