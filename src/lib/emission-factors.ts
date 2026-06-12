@@ -33,3 +33,12 @@ export const EMISSION_FACTORS = {
     compost_kg: 0.05
   }
 };
+
+export const GRID_FACTORS: Record<string, number> = {
+  US: 0.38,
+  UK: 0.21,
+  DE: 0.35,
+  FR: 0.05,
+  IN: 0.71,
+  default: 0.38
+};

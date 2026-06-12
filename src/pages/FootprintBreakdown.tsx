@@ -43,7 +43,7 @@ export function FootprintBreakdown() {
     <div className="max-w-md mx-auto h-full bg-white lg:max-w-3xl min-h-screen pb-10">
       {/* Header */}
       <div className="p-4 border-b border-neutral-100 flex items-center justify-between sticky top-0 bg-white z-10">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-neutral-50 rounded-full transition-colors">
+        <button onClick={() => navigate(-1)} aria-label="Go back" className="p-2 -ml-2 hover:bg-neutral-50 rounded-full transition-colors">
           <ChevronLeft size={24} className="text-neutral-900" />
         </button>
         <h1 className="font-bold text-neutral-900 text-lg">Footprint Breakdown</h1>

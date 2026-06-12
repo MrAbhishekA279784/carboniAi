@@ -1,5 +1,5 @@
 import { UserProfile, CarbonCategory } from "../types";
-import { EMISSION_FACTORS } from "./emission-factors";
+import { EMISSION_FACTORS, GRID_FACTORS } from "./emission-factors";
 
 export function calculateFootprint(profile: UserProfile): Record<CarbonCategory, number> {
   const { transport, energy, food: foodFactors, shopping: shoppingFactors } = EMISSION_FACTORS;
@@ -22,8 +22,9 @@ export function calculateFootprint(profile: UserProfile): Record<CarbonCategory,
     transportEmissions = monthlyDistance * transport.cycling;
   }
 
-  // Energy Calculation
-  const electricityEmissions = (profile.electricityUsage || 0) * energy.electricity_kwh;
+  // Energy Calculation with Regional Electricity Grid Factor
+  const gridFactor = GRID_FACTORS[profile.country || ""] || GRID_FACTORS.default;
+  const electricityEmissions = (profile.electricityUsage || 0) * gridFactor;
   const acEmissions = (profile.acUsage || 0) * 30 * energy.ac_hourly;
   const homeEnergyEmissions = electricityEmissions + acEmissions;
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { db } from '../lib/firebase';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { db, auth } from '../lib/firebase';
+import { collection, query, orderBy, limit, getDocs, startAfter } from 'firebase/firestore';
 import { Card, CardContent } from '../components/ui/card';
 import { Trophy, Medal, User, TrendingUp } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -16,21 +16,61 @@ interface LeaderboardUser {
 export const Leaderboard: React.FC = () => {
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchUsers = async (isFirst = true) => {
+    try {
+      if (isFirst) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      let q = query(
+        collection(db, 'leaderboard'),
+        orderBy('ecoPoints', 'desc'),
+        limit(10)
+      );
+
+      if (!isFirst && lastDoc) {
+        q = query(
+          collection(db, 'leaderboard'),
+          orderBy('ecoPoints', 'desc'),
+          startAfter(lastDoc),
+          limit(10)
+        );
+      }
+
+      const snap = await getDocs(q);
+      const data = snap.docs.map(doc => doc.data() as LeaderboardUser);
+      
+      if (isFirst) {
+        setUsers(data);
+      } else {
+        setUsers(prev => [...prev, ...data]);
+      }
+
+      if (snap.docs.length < 10) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+
+      if (snap.docs.length > 0) {
+        setLastDoc(snap.docs[snap.docs.length - 1]);
+      }
+    } catch (error) {
+      console.error("Error fetching leaderboard", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const q = query(collection(db, 'leaderboard'), orderBy('ecoPoints', 'desc'), limit(50));
-        const snap = await getDocs(q);
-        const data = snap.docs.map(doc => doc.data() as LeaderboardUser);
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching leaderboard", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLeaderboard();
+    fetchUsers(true);
   }, []);
 
   if (loading) return <div className="p-8 text-center">Loading leaderboard...</div>;
@@ -84,32 +124,57 @@ export const Leaderboard: React.FC = () => {
           <span>EcoPoints</span>
         </div>
         <div className="divide-y divide-neutral-100">
-          {users.map((user, idx) => (
-            <div key={user.uid} className="px-6 py-4 flex items-center justify-between hover:bg-neutral-50 transition-colors">
-              <div className="flex items-center space-x-4">
-                <span className={`w-6 text-sm font-black ${idx < 3 ? 'text-primary' : 'text-neutral-400'}`}>{idx + 1}</span>
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-100 border border-neutral-200">
-                   {user.photoURL ? <img src={user.photoURL} alt="" /> : <User className="p-2 text-neutral-400" />}
+          {users.map((user, idx) => {
+            const isCurrentUser = auth.currentUser && user.uid === auth.currentUser.uid;
+            return (
+              <div 
+                key={user.uid} 
+                className={`px-6 py-4 flex items-center justify-between hover:bg-neutral-50 transition-colors ${
+                  isCurrentUser ? 'bg-green-50/50 border-l-4 border-l-primary' : ''
+                }`}
+              >
+                <div className="flex items-center space-x-4">
+                  <span className={`w-6 text-sm font-black ${idx < 3 ? 'text-primary' : 'text-neutral-400'}`}>{idx + 1}</span>
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-100 border border-neutral-200 flex items-center justify-center">
+                     {user.photoURL ? <img src={user.photoURL} alt="" className="w-full h-full object-cover" /> : <User className="p-2 text-neutral-400" />}
+                  </div>
+                  <div>
+                     <div className="flex items-center gap-1.5 animate-fade-in">
+                       <p className="font-bold text-neutral-900 text-sm truncate max-w-[150px]">{user.name}</p>
+                       {isCurrentUser && (
+                         <span className="bg-primary text-white text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-full inline-block">You</span>
+                       )}
+                     </div>
+                     <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">Level {user.level}</p>
+                  </div>
                 </div>
-                <div>
-                   <p className="font-bold text-neutral-900 text-sm">{user.name}</p>
-                   <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">Level {user.level}</p>
+                <div className="flex items-center space-x-4">
+                  <div className="text-right">
+                     <p className="font-black text-neutral-900">{user.ecoPoints.toLocaleString()}</p>
+                     <div className="flex items-center text-[10px] text-green-500 font-bold justify-end">
+                        <TrendingUp size={10} className="mr-0.5" />
+                        <span>+12%</span>
+                     </div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
-                   <p className="font-black text-neutral-900">{user.ecoPoints.toLocaleString()}</p>
-                   <div className="flex items-center text-[10px] text-green-500 font-bold justify-end">
-                      <TrendingUp size={10} className="mr-0.5" />
-                      <span>+12%</span>
-                   </div>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
           {users.length === 0 && <div className="p-8 text-center text-neutral-400">No entries yet. Be the first!</div>}
         </div>
       </Card>
+
+      {hasMore && users.length > 0 && (
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => fetchUsers(false)}
+            disabled={loadingMore}
+            className="px-6 py-2.5 rounded-full bg-neutral-100 hover:bg-neutral-250 text-neutral-800 hover:text-neutral-900 font-bold text-sm transition-all shadow-sm border border-neutral-200/50 disabled:opacity-50"
+          >
+            {loadingMore ? 'Loading...' : 'Load More Champions'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

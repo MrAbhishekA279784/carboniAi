@@ -114,17 +114,17 @@ export const useAppStore = create<AppState>((set, get) => ({
         handleFirestoreError(error, OperationType.GET, `users/${uid}`);
       });
       
-      if (unsubscribeActivities) unsubscribeActivities();
       if (unsubscribeNotifications) unsubscribeNotifications();
 
-      // Setup snapshots for subcollections
+      // Fetch. activities once instead of real-time listener
       const activitiesQuery = query(collection(db, `users/${uid}/activities`), orderBy('timestamp', 'desc'), limit(50));
-      unsubscribeActivities = onSnapshot(activitiesQuery, (snap) => {
+      getDocs(activitiesQuery).then((snap) => {
         const activities = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Activity));
         set({ activities });
-      }, (error) => {
+      }).catch((error) => {
         handleFirestoreError(error, OperationType.LIST, `users/${uid}/activities`);
       });
+      unsubscribeActivities = null;
 
       const notificationsQuery = query(collection(db, `users/${uid}/notifications`), orderBy('timestamp', 'desc'), limit(50));
       unsubscribeNotifications = onSnapshot(notificationsQuery, (snap) => {
@@ -431,6 +431,29 @@ export const useAppStore = create<AppState>((set, get) => ({
     const { user } = get();
     if (!user) return;
     
+    let action = 'habit';
+    if (xpGain === 15) {
+      action = 'action';
+    } else if (xpGain > 15) {
+      action = 'mission';
+    } else if (xpGain === 0) {
+      action = 'level_bonus';
+    }
+
+    try {
+      const response = await axios.post('/api/xp/award', { action, xpGain, ecoPointsGain });
+      const { verified, xpGain: verifiedXP, ecoPointsGain: verifiedEcoPoints } = response.data;
+      if (!verified) {
+        console.error("XP validation failed.");
+        return;
+      }
+      xpGain = verifiedXP;
+      ecoPointsGain = verifiedEcoPoints;
+    } catch (e: any) {
+      console.error("XP verification failed. Fraud attempt blocked.", e.message);
+      return;
+    }
+
     let newXp = (user.xp || 0) + xpGain;
     let newLevel = user.level || 1;
     let newEcoPoints = (user.ecoPoints || 0) + ecoPointsGain;
@@ -526,12 +549,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (!auth.currentUser) return;
     try {
       const activitiesRef = collection(db, `users/${auth.currentUser.uid}/activities`);
-      await addDoc(activitiesRef, {
+      const newActivityDoc = {
         type,
         title,
         description,
-        timestamp: serverTimestamp(),
+        timestamp: new Date().toISOString(),
         metadata: metadata || {}
+      };
+      
+      const docRef = await addDoc(activitiesRef, {
+        ...newActivityDoc,
+        timestamp: serverTimestamp()
+      });
+
+      // Appending to the local activities state immediately for instant feedback
+      const { activities } = get();
+      set({
+        activities: [
+          { id: docRef.id, ...newActivityDoc } as Activity,
+          ...activities
+        ].slice(0, 50)
       });
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, `users/${auth.currentUser.uid}/activities`);

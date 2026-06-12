@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/
 import { db, auth } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firestore-utils';
+import { safeDivide } from '../lib/utils';
 
 interface Scenario {
   id: string;
@@ -43,13 +44,18 @@ export function WhatIfSimulator() {
   const currentFootprint = carbonData.total || 210;
   
   const calculateTotalReduction = () => {
-    // reduction per month = reduction per day * days a week * 4
-    return Math.round(scenarios.reduce((sum, s) => sum + (s.baseReductionPerDay * s.daysAWeek * 4), 0));
+    return Math.round(
+      scenarios.reduce((sum, s) => {
+        const days = Math.max(1, Math.min(7, s.daysAWeek || 1));
+        const reduction = Math.max(0, s.baseReductionPerDay || 0);
+        return sum + (reduction * days * 4);
+      }, 0)
+    );
   };
   
   const reductionValue = calculateTotalReduction();
   const newFootprint = Math.max(0, currentFootprint - reductionValue);
-  const reductionPercent = currentFootprint > 0 ? Math.round((reductionValue / currentFootprint) * 100) : 0;
+  const reductionPercent = Math.round(safeDivide(reductionValue, currentFootprint) * 100);
 
   const handleRunSimulation = async () => {
     setIsCalculating(true);
@@ -92,13 +98,15 @@ export function WhatIfSimulator() {
   const handleSaveScenario = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingScenario) {
-      const idx = scenarios.findIndex(s => s.id === editingScenario.id);
+      const clampedDays = Math.max(1, Math.min(7, editingScenario.daysAWeek || 1));
+      const scenarioToSave = { ...editingScenario, daysAWeek: clampedDays };
+      const idx = scenarios.findIndex(s => s.id === scenarioToSave.id);
       if (idx !== -1) {
         const newScenarios = [...scenarios];
-        newScenarios[idx] = editingScenario;
+        newScenarios[idx] = scenarioToSave;
         setScenarios(newScenarios);
       } else {
-        setScenarios([...scenarios, editingScenario]);
+        setScenarios([...scenarios, scenarioToSave]);
       }
     }
     setEditModalOpen(false);
@@ -114,7 +122,7 @@ export function WhatIfSimulator() {
     <div className="max-w-md mx-auto h-full bg-neutral-50/30 lg:max-w-3xl min-h-screen pb-10">
       {/* Header */}
       <div className="p-4 flex items-center justify-between sticky top-0 bg-transparent z-10">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-white rounded-full transition-colors shadow-sm">
+        <button onClick={() => navigate(-1)} aria-label="Go back" className="p-2 -ml-2 hover:bg-white rounded-full transition-colors shadow-sm">
           <ChevronLeft size={24} className="text-neutral-900" />
         </button>
         <h1 className="font-bold text-neutral-900 text-lg">What-If Simulator</h1>
@@ -260,13 +268,19 @@ export function WhatIfSimulator() {
                   </select>
                </div>
                <div>
-                 <label className="text-sm font-bold text-neutral-700 mb-1 block">Days a Week</label>
+                 <label className="text-sm font-bold text-neutral-700 mb-1 block">Days a Week (1 - 7)</label>
                  <input 
                    type="number" min="1" max="7" 
                    value={editingScenario.daysAWeek} 
-                   onChange={(e) => setEditingScenario({ ...editingScenario, daysAWeek: parseInt(e.target.value) || 1 })}
+                   onChange={(e) => {
+                     const val = parseInt(e.target.value);
+                     setEditingScenario({ ...editingScenario, daysAWeek: isNaN(val) ? 1 : val });
+                   }}
                    className="w-full p-2 border rounded-xl"
                  />
+                 {(editingScenario.daysAWeek < 1 || editingScenario.daysAWeek > 7) && (
+                   <p className="text-xs text-red-500 mt-1 font-semibold">Value must be between 1 and 7 (will clamp on save).</p>
+                 )}
                </div>
                <Button type="submit" className="w-full h-12 font-bold rounded-xl">Save Scenario</Button>
             </form>

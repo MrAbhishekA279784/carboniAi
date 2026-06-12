@@ -3,6 +3,7 @@ export type CarbonCategory = "Transport" | "Home Energy" | "Food" | "Shopping" |
 export interface UserProfile {
   name: string;
   city: string;
+  country: string; // Regional electricity grid country code, e.g. US, UK, DE, FR, IN
   occupation: string;
   commuteDistance: number;
   transportMode: string;
@@ -74,6 +75,7 @@ export interface CarbonData {
 export const INITIAL_USER: UserProfile = {
   name: "Abhishek R.",
   city: "San Francisco",
+  country: "US",
   occupation: "Software Engineer",
   commuteDistance: 25,
   transportMode: "Car",

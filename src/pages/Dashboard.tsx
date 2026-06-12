@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { NotificationsPopover } from "../components/layout/NotificationsPopover";
 import { HabitManager } from "../components/dashboard/HabitManager";
 import { ActionModal } from "../components/dashboard/ActionModal";
+import { carbonEquivalency } from "../lib/utils";
 
 const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a855f7', '#ef4444'];
 const CATEGORY_ICONS: Record<string, any> = {
@@ -265,10 +266,13 @@ export function Dashboard() {
                   <Leaf size={18} className="text-green-300" />
                 </div>
               </div>
-              <div className="flex items-baseline space-x-2 mb-2">
+              <div className="flex items-baseline space-x-2 mb-1">
                 <h2 className="text-5xl font-black tracking-tighter">{carbonData.total}</h2>
                 <span className="text-sm font-bold text-green-300/80 uppercase tracking-widest">kg CO₂e</span>
               </div>
+              <p className="text-[11px] font-semibold text-green-200/80 mb-5 leading-normal">
+                {carbonEquivalency(carbonData.total)}
+              </p>
               
               <div className="inline-flex items-center space-x-1.5 bg-white/10 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-md border border-white/5 shadow-inner mb-10 text-green-300">
                 <ArrowDownToLine size={12} />

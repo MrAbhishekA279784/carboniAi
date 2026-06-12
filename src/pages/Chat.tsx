@@ -15,7 +15,7 @@ interface Message {
 }
 
 export function Chat() {
-  const { user, carbonData } = useAppStore();
+  const { user, carbonData, activities, missions } = useAppStore();
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'assistant', 
@@ -48,7 +48,9 @@ export function Chat() {
         body: JSON.stringify({
           messages: [...messages, userMessage],
           userProfile: user,
-          carbonData: carbonData
+          carbonData: carbonData,
+          recentActivities: activities,
+          activeMissions: missions
         }),
       });
 
@@ -76,7 +78,7 @@ export function Chat() {
       {/* Header */}
       <header className="p-4 border-b border-neutral-100 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-10">
         <div className="flex items-center space-x-3">
-          <button onClick={() => navigate(-1)} className="p-1 hover:bg-neutral-50 rounded-full">
+          <button onClick={() => navigate(-1)} aria-label="Go back" className="p-1 hover:bg-neutral-50 rounded-full">
             <ChevronLeft size={24} className="text-neutral-900" />
           </button>
           <div className="flex items-center space-x-2">

@@ -3,6 +3,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { User, Clock, Settings, HelpCircle, ChevronRight, Leaf, Target, Zap, Trophy, BarChart2, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ProfileEditModal, HelpSupportModal } from '../components/profile/ProfileModals';
+import { carbonEquivalency } from "../lib/utils";
 
 export function Profile() {
   const { user, carbonData, missions, actions, habits } = useAppStore();
@@ -70,7 +71,12 @@ export function Profile() {
                  <Leaf size={16} /> 
                  <span className="font-semibold text-neutral-500 text-xs">Total Saved</span>
                </div>
-               <div className="text-xl font-bold text-green-600">{totalSaved} <span className="text-xs text-neutral-500">kg CO₂e</span></div>
+               <div className="text-xl font-bold text-green-600 mb-1">{totalSaved} <span className="text-xs text-neutral-500">kg CO₂e</span></div>
+               {totalSaved > 0 && (
+                 <span className="text-[10px] text-neutral-400 font-medium leading-none">
+                   {carbonEquivalency(totalSaved)}
+                 </span>
+               )}
              </Card>
              
              <Card className="rounded-2xl border-none shadow-sm flex flex-col justify-center bg-white p-4">

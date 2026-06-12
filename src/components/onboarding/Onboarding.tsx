@@ -15,6 +15,7 @@ import { ChevronLeft } from "lucide-react";
 const onboardingSchema = z.object({
   name: z.string().min(2, "Name is required"),
   city: z.string().min(2, "City is required"),
+  country: z.string().min(1, "Country is required"),
   occupation: z.string().min(2, "Occupation is required"),
   commuteDistance: z.number().min(0).max(200),
   transportMode: z.string(),
@@ -36,6 +37,7 @@ export function Onboarding() {
     defaultValues: {
       name: "",
       city: "",
+      country: "US",
       occupation: "",
       commuteDistance: 25,
       transportMode: "Car",
@@ -70,24 +72,41 @@ export function Onboarding() {
       fields: (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>What's your name?</Label>
+            <Label htmlFor="nameInput">What's your name?</Label>
             <input 
+              id="nameInput"
               {...form.register("name")} 
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
               placeholder="e.g. Abhishek" 
             />
           </div>
           <div className="space-y-2">
-            <Label>Where do you live?</Label>
+            <Label htmlFor="cityInput">Where do you live? (City)</Label>
             <input 
+              id="cityInput"
               {...form.register("city")} 
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
               placeholder="e.g. San Francisco, CA" 
             />
           </div>
           <div className="space-y-2">
-            <Label>What's your occupation?</Label>
+            <Label htmlFor="countrySelect">Country (for regional grid factors)</Label>
+            <select 
+              id="countrySelect"
+              {...form.register("country")} 
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
+            >
+              <option value="US">United States (US - 0.38 kg/kWh)</option>
+              <option value="UK">United Kingdom (UK - 0.21 kg/kWh)</option>
+              <option value="DE">Germany (DE - 0.35 kg/kWh)</option>
+              <option value="FR">France (FR - 0.05 kg/kWh)</option>
+              <option value="IN">India (IN - 0.71 kg/kWh)</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="occupationInput">What's your occupation?</Label>
             <input 
+              id="occupationInput"
               {...form.register("occupation")} 
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
               placeholder="e.g. Designer, Engineer" 

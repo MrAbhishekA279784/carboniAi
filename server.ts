@@ -21,6 +21,29 @@ const ai = new GoogleGenAI({
   }
 });
 
+function sanitizeAIInput(input: string): string {
+  if (!input) return "";
+  const patterns = [
+    /ignore prior/i,
+    /ignore previous/i,
+    /ignore all instructions/i,
+    /system instruction/i,
+    /forget everything/i,
+    /you are now a/i,
+    /override/i,
+    /jailbreak/i,
+    /dan mode/i
+  ];
+  
+  let cleaned = input;
+  for (const pattern of patterns) {
+    if (pattern.test(cleaned)) {
+      cleaned = cleaned.replace(pattern, "[removed injection attempt]");
+    }
+  }
+  return cleaned;
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -93,6 +116,38 @@ async function startServer() {
     }
   });
 
+  // --- XP RATELIMITING & AWARD API ---
+  const XP_LIMITS: Record<string, number> = {
+    habit: 5, action: 15, mission: 100, level_bonus: 0
+  };
+
+  app.post("/api/xp/award", (req, res) => {
+    try {
+      const { action, xpGain, ecoPointsGain } = req.body;
+      if (!action) return res.status(400).json({ error: "Action is required" });
+      
+      const maxXP = XP_LIMITS[action];
+      if (maxXP === undefined) {
+        return res.status(400).json({ error: `Unknown award action: ${action}` });
+      }
+
+      if (xpGain > maxXP) {
+        return res.status(400).json({ 
+          error: `Rejected: xpGain ${xpGain} exceeds backend limit ${maxXP} for ${action}` 
+        });
+      }
+
+      return res.json({
+        verified: true,
+        xpGain,
+        ecoPointsGain
+      });
+    } catch (error: any) {
+      console.error("XP Award Error:", error);
+      res.status(500).json({ error: "Failed to validate XP award" });
+    }
+  });
+
   // API Route for AI Coach
   app.post("/api/gemini/coach", async (req, res) => {
     try {
@@ -130,8 +185,13 @@ async function startServer() {
   // Multi-turn Chat API
   app.post("/api/gemini/chat", async (req, res) => {
     try {
-      const { messages, userProfile, carbonData } = req.body;
+      const { messages, userProfile, carbonData, recentActivities, activeMissions } = req.body;
       
+      // Sanitize the last user message of the history
+      if (messages && messages.length > 0) {
+        messages[messages.length - 1].content = sanitizeAIInput(messages[messages.length - 1].content);
+      }
+
       const chat = ai.chats.create({
         model: "gemini-3.5-flash",
         config: {
@@ -139,11 +199,14 @@ async function startServer() {
           You help users understand and reduce their carbon footprint.
           User Profile: ${JSON.stringify(userProfile)}
           Current Footprint: ${JSON.stringify(carbonData)}
+          Recent Carbon-Saving Activities: ${JSON.stringify(recentActivities || [])}
+          Active Sustainable Missions: ${JSON.stringify(activeMissions || [])}
           
           Guidelines:
           - Be friendly, professional and encouraging.
           - Use "we" to emphasize collaboration.
-          - Provide specific, data-driven advice when possible based on the user's footprint.
+          - Provide specific, data-driven advice when possible based on the user's footprint, their recent carbon-saving activities, and active missions.
+          - Try to mention their recent activities (e.g. "Excellent job on completing standard activities") or advocate for completing active missions when pertinent.
           - If asked about specific actions, refer to their current categories (Transport, Energy, etc).
           - Keep responses relatively brief (max 150 words) for mobile readability.`,
         },
@@ -168,13 +231,14 @@ async function startServer() {
   app.post("/api/gemini/whatif", async (req, res) => {
     try {
       const { prompt, userProfile, currentFootprint } = req.body;
+      const sanitizedPrompt = sanitizeAIInput(prompt);
       
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
         config: {
           systemInstruction: "You are a simulation analyzer for CARBONIQ. Analyze the what-if scenario based on the user's current footprint and profile. Provide a short, structured analysis of the impact. User Profile: " + JSON.stringify(userProfile) + " Current Footprint: " + currentFootprint + " kg CO2e. Respond in concise bullet points.",
         },
-        contents: prompt
+        contents: sanitizedPrompt
       });
       res.json({ text: response.text });
     } catch (error: any) {
@@ -187,10 +251,11 @@ async function startServer() {
   app.post("/api/gemini/search", async (req, res) => {
     try {
       const { prompt } = req.body;
+      const sanitizedPrompt = sanitizeAIInput(prompt);
       
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
-        contents: prompt,
+        contents: sanitizedPrompt,
         config: {
           tools: [{ googleSearch: {} }]
         }
