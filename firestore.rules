@@ -59,13 +59,17 @@ service cloud.firestore {
     match /leaderboard/{uid} {
       allow list, get: if isSignedIn();
       allow write: if isOwner(uid)
+        && incoming().uid == request.auth.uid
+        && incoming().name is string
+        && incoming().level is number
+        && incoming().ecoPoints is number
         && (existing() == null
             || !('ecoPoints' in existing())
             || (
                  incoming().ecoPoints - existing().ecoPoints <= 1000
-              && incoming().level - existing().level <= 1
-            ))
-        && incoming().updatedAt == request.time;
+               && incoming().level - existing().level <= 1
+             ))
+        && incoming().updatedAt <= request.time;
     }
   }
 }

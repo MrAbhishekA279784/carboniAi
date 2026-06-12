@@ -12,8 +12,14 @@ import { generateWeeklyMissions } from "./src/lib/mission-engine";
 
 dotenv.config();
 
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.error("CRITICAL: GEMINI_API_KEY environment variable is not set. Server startup aborted.");
+  process.exit(1);
+}
+
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY || "dummy_key",
+  apiKey: GEMINI_API_KEY,
   httpOptions: {
     headers: {
       'User-Agent': 'aistudio-build',
@@ -189,7 +195,7 @@ async function startServer() {
 
       console.log("[CHAT] Incoming request body keys:", Object.keys(req.body));
       console.log("[CHAT] messages length:", messages?.length);
-      console.log("[CHAT] GEMINI_API_KEY loaded:", !!process.env.GEMINI_API_KEY, "length:", process.env.GEMINI_API_KEY?.length);
+      console.log("[CHAT] GEMINI_API_KEY loaded:", !!process.env.GEMINI_API_KEY);
 
       // Sanitize the last user message of the history
       if (messages && messages.length > 0) {
