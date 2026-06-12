@@ -39,7 +39,7 @@ Traditional carbon calculators are static — you answer a questionnaire, see a 
 ### 🏠 Dashboard — Mission Control
 Your sustainability command center. Displays live monthly footprint, carbon budget remaining, eco-level progress, footprint breakdown donut chart, and a 6-month trend line — all synchronized in real-time via Firestore `onSnapshot` listeners.
 
-![Dashboard](https://placehold.co/900x450/1a2e1a/16a34a?text=Dashboard+Screenshot)
+![Dashboard](assets/dashboard.png)
 
 ### 🧾 6-Step Carbon Profile Onboarding
 A guided onboarding flow that captures:
@@ -412,9 +412,7 @@ CarboniQ is built to **WCAG AA** compliance standards:
 | Role | Contributor |
 |---|---|
 | Full-Stack Development | Abhishek Gupta |
-| Co-Developer | Shubham |
-
-*Built with 💚 for a greener future — CarboniQ Hackathon 2026*
+*Built with 💚 for a greener future — CarboniQ promptwar 2026*
 
 ---
 
