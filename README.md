@@ -97,23 +97,23 @@ Real-time competitive ranking by EcoPoints. Top-3 podium display with current us
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    CLIENT (React 18 + Vite)                  │
+│                    CLIENT (React 18 + Vite)                 │
 │                                                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────┐  │
-│  │Dashboard │  │ Missions │  │Simulator │  │  Chat UI  │  │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └─────┬─────┘  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────┐    │
+│  │Dashboard │  │ Missions │  │Simulator │  │  Chat UI  │    │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └─────┬─────┘    │
 │       └──────────────┴──────────────┴──────────────┘        │
-│                          │                                   │
+│                          │                                  │
 │              ┌───────────▼───────────┐                      │
-│              │   Zustand Store        │                      │
-│              │  (Single Source of     │                      │
-│              │   Truth — store.ts)    │                      │
+│              │   Zustand Store        │                     │
+│              │  (Single Source of     │                     │
+│              │   Truth — store.ts)    │                     │
 │              └───────────┬───────────┘                      │
-│                          │                                   │
+│                          │                                  │
 └──────────────────────────┼──────────────────────────────────┘
                            │ HTTP / REST
 ┌──────────────────────────▼──────────────────────────────────┐
-│                  SERVER (Express + Node.js)                   │
+│                  SERVER (Express + Node.js)                 │
 │                                                             │
 │  /api/carbon/calculate   →  carbon-engine.ts                │
 │  /api/recommendations    →  recommendation-engine.ts        │
@@ -125,11 +125,11 @@ Real-time competitive ranking by EcoPoints. Top-3 podium display with current us
 └──────────────────────────┬──────────────────────────────────┘
                            │
         ┌──────────────────▼──────────────────┐
-        │         Google Firebase              │
-        │                                      │
+        │         Google Firebase             │
+        │                                     │
         │  ┌─────────────┐  ┌──────────────┐  │
-        │  │  Firestore  │  │ Firebase Auth │  │
-        │  │  (Realtime  │  │ (Google OAuth)│  │
+        │  │  Firestore  │  │ Firebase Auth │ │
+        │  │  (Realtime  │  │ (Google OAuth)│ │
         │  │  onSnapshot)│  └──────────────┘  │
         │  └─────────────┘                    │
         └─────────────────────────────────────┘
