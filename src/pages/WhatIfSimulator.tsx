@@ -29,7 +29,7 @@ const SCENARIO_TEMPLATES = [
 ];
 
 export function WhatIfSimulator() {
-  const { carbonData } = useAppStore();
+  const carbonData = useAppStore(s => s.carbonData);
   const navigate = useNavigate();
   const [simulationActive, setSimulationActive] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -260,7 +260,7 @@ export function WhatIfSimulator() {
                     onChange={(e) => {
                        const tmpl = SCENARIO_TEMPLATES.find(t => t.title === e.target.value);
                        if (tmpl) {
-                          setEditingScenario({ ...editingScenario, title: tmpl.title, type: tmpl.type as any, baseReductionPerDay: tmpl.baseReductionPerDay });
+                          setEditingScenario({ ...editingScenario, title: tmpl.title, type: tmpl.type as "Transport" | "Diet" | "Energy" | "Shopping", baseReductionPerDay: tmpl.baseReductionPerDay });
                        }
                     }}
                   >

@@ -318,7 +318,7 @@ export function Onboarding() {
                     <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-xl">
                       <p className="text-[10px] font-bold text-red-500 uppercase tracking-wider">Please check the following:</p>
                       <ul className="text-xs text-red-600 mt-1 list-disc list-inside font-medium">
-                        {Object.values(form.formState.errors).map((err: any, i) => (
+                        {Object.values(form.formState.errors).map((err: { message?: string }, i) => (
                           <li key={i}>{err.message || "Invalid input"}</li>
                         ))}
                       </ul>

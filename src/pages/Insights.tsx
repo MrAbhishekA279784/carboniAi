@@ -10,7 +10,7 @@ import Markdown from "react-markdown";
 import axios from "axios";
 
 export function Insights() {
-  const { carbonData } = useAppStore();
+  const carbonData = useAppStore(s => s.carbonData);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);

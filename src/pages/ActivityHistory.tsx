@@ -4,7 +4,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { MapPin, Trophy, Leaf, Zap, Shield, Calendar, Clock } from 'lucide-react';
 import { motion } from 'motion/react';
 
-const TYPE_CONFIG: Record<string, { icon: any, color: string, bg: string }> = {
+const TYPE_CONFIG: Record<string, { icon: React.ElementType, color: string, bg: string }> = {
   'level': { icon: Trophy, color: 'text-violet-600', bg: 'bg-violet-100' },
   'badge': { icon: Shield, color: 'text-amber-600', bg: 'bg-amber-100' },
   'mission': { icon: Zap, color: 'text-blue-600', bg: 'bg-blue-100' },
@@ -14,7 +14,7 @@ const TYPE_CONFIG: Record<string, { icon: any, color: string, bg: string }> = {
 };
 
 export const ActivityHistory: React.FC = () => {
-  const { activities } = useAppStore();
+  const activities = useAppStore(s => s.activities);
 
   return (
     <div className="p-4 lg:p-8 max-w-2xl mx-auto">

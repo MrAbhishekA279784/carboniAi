@@ -10,7 +10,7 @@ interface ActionModalProps {
   trigger: React.ReactNode;
 }
 
-export function ActionModal({ action, trigger }: ActionModalProps) {
+export const ActionModal = React.memo(function ActionModal({ action, trigger }: ActionModalProps) {
   const { completeAction } = useAppStore();
   const [open, setOpen] = useState(false);
 
@@ -76,4 +76,4 @@ export function ActionModal({ action, trigger }: ActionModalProps) {
       </DialogContent>
     </Dialog>
   );
-}
+});

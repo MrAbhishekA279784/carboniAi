@@ -13,7 +13,7 @@ interface Activity {
   title: string;
   description: string;
   timestamp: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 interface Notification {
@@ -50,7 +50,7 @@ interface AppState {
   removeHabit: (id: string) => Promise<void>;
   setReductionGoal: (goal: number) => Promise<void>;
   completeMission: (id: string) => Promise<void>;
-  addActivity: (type: string, title: string, description: string, metadata?: any) => Promise<void>;
+  addActivity: (type: 'action' | 'mission' | 'habit', title: string, description: string, metadata?: Record<string, unknown>) => Promise<void>;
   addNotification: (title: string, message: string, link?: string) => Promise<void>;
   markNotificationRead: (id: string) => Promise<void>;
   addXPEcoPoints: (xpGain: number, ecoPointsGain: number) => Promise<void>;
@@ -239,8 +239,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
       
       await get().checkAchievements();
-    } catch (error: any) {
-      console.error("Failed to update carbon data", error.message);
+    } catch (error: unknown) {
+      console.error("Failed to update carbon data", error instanceof Error ? error.message : String(error));
     }
   },
 
@@ -470,8 +470,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
       xpGain = verifiedXP;
       ecoPointsGain = verifiedEcoPoints;
-    } catch (e: any) {
-      console.error("XP verification failed. Fraud attempt blocked.", e.message);
+    } catch (e: unknown) {
+      console.error("XP verification failed. Fraud attempt blocked.", e instanceof Error ? e.message : String(e));
       return;
     }
 
@@ -556,7 +556,9 @@ export const useAppStore = create<AppState>((set, get) => ({
              streak: newStreak, 
              lastActivityDate: today
            });
-         } catch(e) {}
+          } catch(e) {
+            handleFirestoreError(e, OperationType.WRITE, `users/${auth.currentUser.uid}/streak`);
+          }
        }
     }
   },

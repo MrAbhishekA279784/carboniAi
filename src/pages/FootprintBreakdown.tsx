@@ -6,19 +6,12 @@ import { ChevronLeft, ChevronDown, Bus, Zap, Leaf, ShoppingBag, Droplet, ArrowRi
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 
-const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a855f7', '#ef4444'];
-const CATEGORY_ICONS: Record<string, any> = {
-  "Transport": Bus,
-  "Home Energy": Zap,
-  "Food": Leaf,
-  "Shopping": ShoppingBag,
-  "Waste": Droplet,
-};
+import { COLORS, CATEGORY_ICONS } from "../lib/constants";
 
 type TimeFrame = 'Day' | 'Week' | 'Month' | 'Year';
 
 export function FootprintBreakdown() {
-  const { carbonData } = useAppStore();
+  const carbonData = useAppStore(s => s.carbonData);
   const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState<TimeFrame>('Month');
   const [filterOpen, setFilterOpen] = useState(false);

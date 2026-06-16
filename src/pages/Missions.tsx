@@ -7,7 +7,10 @@ import { motion } from "motion/react";
 import { Button } from "../components/ui/button";
 
 export function Missions() {
-  const { missions, achievements, checkAchievements, completeMission } = useAppStore();
+  const missions = useAppStore(s => s.missions);
+  const achievements = useAppStore(s => s.achievements);
+  const checkAchievements = useAppStore(s => s.checkAchievements);
+  const completeMission = useAppStore(s => s.completeMission);
   const [activeTab, setActiveTab] = useState<'active'|'completed'|'badges'>('active');
 
   useEffect(() => {

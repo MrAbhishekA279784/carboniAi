@@ -15,7 +15,10 @@ interface Message {
 }
 
 export function Chat() {
-  const { user, carbonData, activities, missions } = useAppStore();
+  const user = useAppStore(s => s.user);
+  const carbonData = useAppStore(s => s.carbonData);
+  const activities = useAppStore(s => s.activities);
+  const missions = useAppStore(s => s.missions);
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'assistant', 

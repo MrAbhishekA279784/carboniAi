@@ -6,7 +6,8 @@ import { ChevronRight } from 'lucide-react';
 import { UserProfile } from '../../types';
 
 export function ProfileEditModal({ trigger }: { trigger: React.ReactElement }) {
-  const { user, setUser } = useAppStore();
+  const user = useAppStore(s => s.user);
+  const setUser = useAppStore(s => s.setUser);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: user.name,

@@ -18,7 +18,7 @@ const AVAILABLE_HABITS = [
   { id: 'h11', title: 'Recycled Waste', icon: '♻️' }
 ];
 
-export function HabitManager() {
+export const HabitManager = React.memo(function HabitManager() {
   const { habits, addHabit, removeHabit } = useAppStore();
   const [open, setOpen] = useState(false);
 
@@ -59,4 +59,4 @@ export function HabitManager() {
       </DialogContent>
     </Dialog>
   );
-}
+});

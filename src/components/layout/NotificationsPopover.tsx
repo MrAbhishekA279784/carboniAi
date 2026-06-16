@@ -4,7 +4,7 @@ import { Bell, X, Check, Clock, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../ui/button';
 
-export const NotificationsPopover: React.FC = () => {
+export const NotificationsPopover: React.FC = React.memo(() => {
   const { notifications, markNotificationRead } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   
@@ -97,4 +97,4 @@ export const NotificationsPopover: React.FC = () => {
       </AnimatePresence>
     </div>
   );
-};
+});

@@ -9,7 +9,7 @@ import { PrivacySecurityModal, NotificationsModal, LanguageModal } from '../comp
 
 export const Settings: React.FC = () => {
   const { logout } = useAuth();
-  const { user } = useAppStore();
+  const user = useAppStore(s => s.user);
 
   return (
     <div className="p-4 lg:p-8 max-w-2xl mx-auto">

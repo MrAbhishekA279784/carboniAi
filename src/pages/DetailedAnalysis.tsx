@@ -4,14 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ChevronLeft, Bus, Zap, Leaf, ShoppingBag, Droplet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a855f7', '#ef4444'];
-const CATEGORY_ICONS: Record<string, any> = {
-  "Transport": Bus,
-  "Home Energy": Zap,
-  "Food": Leaf,
-  "Shopping": ShoppingBag,
-  "Waste": Droplet,
-};
+import { COLORS, CATEGORY_ICONS } from "../lib/constants";
 
 const CATEGORY_RECOMMENDATIONS: Record<string, string[]> = {
   "Transport": ["Switch to public transit", "Carpool to work", "Consider an EV for your next car"],
@@ -22,7 +15,7 @@ const CATEGORY_RECOMMENDATIONS: Record<string, string[]> = {
 };
 
 export function DetailedAnalysis() {
-  const { carbonData } = useAppStore();
+  const carbonData = useAppStore(s => s.carbonData);
   const navigate = useNavigate();
 
   const totalFootprint = carbonData.total;

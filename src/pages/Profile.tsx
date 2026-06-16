@@ -6,7 +6,11 @@ import { ProfileEditModal, HelpSupportModal } from '../components/profile/Profil
 import { carbonEquivalency } from "../lib/utils";
 
 export function Profile() {
-  const { user, carbonData, missions, actions, habits } = useAppStore();
+  const user = useAppStore(s => s.user);
+  const carbonData = useAppStore(s => s.carbonData);
+  const missions = useAppStore(s => s.missions);
+  const actions = useAppStore(s => s.actions);
+  const habits = useAppStore(s => s.habits);
   const navigate = useNavigate();
 
   // Calculate dynamic stats

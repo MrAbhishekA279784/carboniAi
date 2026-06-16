@@ -77,7 +77,8 @@ async function startServer() {
       };
       const total = Object.values(breakdown).reduce((a, b) => a + b, 0);
       res.json({ total, breakdown, score: 100 - (total / 10) });
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Calculate Error:", error);
       res.status(500).json({ error: "Calculation failed" });
     }
@@ -90,7 +91,8 @@ async function startServer() {
       if (!profile || !footprint) return res.status(400).json({ error: "Profile and footprint required" });
       const recommendations = generateRecommendations(profile, footprint);
       res.json(recommendations);
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Recommendations Error:", error);
       res.status(500).json({ error: "Failed to generate recommendations" });
     }
@@ -103,7 +105,8 @@ async function startServer() {
       if (!profile || !scenario) return res.status(400).json({ error: "Profile and scenario required" });
       const result = simulateScenario(profile, scenario);
       res.json(result);
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Simulator Error:", error);
       res.status(500).json({ error: "Simulation failed" });
     }
@@ -116,7 +119,8 @@ async function startServer() {
       if (!profile) return res.status(400).json({ error: "Profile required" });
       const missions = generateWeeklyMissions(profile);
       res.json(missions);
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Missions Error:", error);
       res.status(500).json({ error: "Failed to fetch missions" });
     }
@@ -148,7 +152,8 @@ async function startServer() {
         xpGain,
         ecoPointsGain
       });
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("XP Award Error:", error);
       res.status(500).json({ error: "Failed to validate XP award" });
     }
@@ -182,7 +187,8 @@ async function startServer() {
         contents: prompt
       });
       res.json({ text: response.text });
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Gemini API Error:", error);
       res.status(500).json({ error: error.message });
     }
@@ -203,7 +209,7 @@ async function startServer() {
         console.log("[CHAT] Last message role:", messages[messages.length - 1].role, "content:", messages[messages.length - 1].content.substring(0, 100));
       }
 
-      const history = messages.slice(0, -1).map((m: any) => ({
+      const history = messages.slice(0, -1).map((m: {role: string, content: string}) => ({
         role: m.role === 'user' ? 'user' : 'model',
         parts: [{ text: m.content }]
       }));
@@ -246,13 +252,13 @@ async function startServer() {
       console.log("[CHAT] response.text:", response.text ? response.text.substring(0, 200) : "UNDEFINED");
 
       res.json({ text: response.text });
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("[CHAT] ERROR:", error.message);
       console.error("[CHAT] Error stack:", error.stack);
       console.error("[CHAT] Error name:", error.name);
-      console.error("[CHAT] Error status:", error.status);
-      if (error.error) {
-        console.error("[CHAT] Error detail:", JSON.stringify(error.error));
+      if ('error' in error) {
+        console.error("[CHAT] Error detail:", JSON.stringify((error as any).error));
       }
       res.status(500).json({ error: "Failed to connect to EcoAgent AI" });
     }
@@ -272,7 +278,8 @@ async function startServer() {
         contents: sanitizedPrompt
       });
       res.json({ text: response.text });
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Gemini API Error:", error);
       res.status(500).json({ error: error.message });
     }
@@ -292,7 +299,8 @@ async function startServer() {
         }
       });
       res.json({ text: response.text });
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as Error;
       console.error("Gemini Search API Error:", error);
       res.status(500).json({ error: error.message });
     }

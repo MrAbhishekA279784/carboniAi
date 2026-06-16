@@ -17,7 +17,7 @@ export const Leaderboard: React.FC = () => {
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [lastDoc, setLastDoc] = useState<unknown>(null);
   const [hasMore, setHasMore] = useState(true);
 
   const fetchUsers = async (isFirst = true) => {

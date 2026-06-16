@@ -45,11 +45,4 @@ export function calculateAnnualFootprint(data: LifestyleData) {
   };
 }
 
-export function simulateScenario(profile: UserProfile, scenario: any): any {
-  return {
-    currentFootprint: {},
-    newFootprint: {},
-    totalReduction: 0,
-    yearlySavings: 0
-  };
-}
+

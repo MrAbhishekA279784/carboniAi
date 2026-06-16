@@ -71,9 +71,9 @@ describe('calculateFootprint — Transport', () => {
 
 describe('calculateFootprint — Home Energy', () => {
   it('calculates electricity emissions correctly', () => {
-    // 200 kWh * 0.45 + 4h * 30days * 1.2 = 90 + 144 = 234
+    // 200 kWh * 0.38 (default) + 4h * 30days * 1.2 = 76 + 144 = 220
     const result = calculateFootprint({ ...baseProfile, electricityUsage: 200, acUsage: 4 });
-    expect(result['Home Energy']).toBeCloseTo(234, 0);
+    expect(result['Home Energy']).toBeCloseTo(220, 0);
   });
 
   it('returns zero home energy for zero usage', () => {

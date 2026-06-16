@@ -8,7 +8,12 @@ import { HabitManager } from "../components/dashboard/HabitManager";
 import { ActionModal } from "../components/dashboard/ActionModal";
 
 export function ActionPlan() {
-  const { actions, carbonData, setReductionGoal, completeAction, habits, toggleHabit } = useAppStore();
+  const actions = useAppStore(s => s.actions);
+  const carbonData = useAppStore(s => s.carbonData);
+  const setReductionGoal = useAppStore(s => s.setReductionGoal);
+  const completeAction = useAppStore(s => s.completeAction);
+  const habits = useAppStore(s => s.habits);
+  const toggleHabit = useAppStore(s => s.toggleHabit);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const handleLoadMore = () => {

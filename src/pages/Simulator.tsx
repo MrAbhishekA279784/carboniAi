@@ -11,7 +11,7 @@ import { calculateAnnualFootprint, LifestyleData } from "../lib/simulator-engine
 import { motion, AnimatePresence } from "motion/react";
 
 export function Simulator() {
-  const { carbonData } = useAppStore();
+  const carbonData = useAppStore(s => s.carbonData);
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<LifestyleData>({
     transport: {
@@ -42,14 +42,14 @@ export function Simulator() {
     }, 800);
   };
 
-  const updateTransport = (field: keyof LifestyleData['transport'], value: any) => {
+  const updateTransport = (field: keyof LifestyleData['transport'], value: unknown) => {
     setFormData(prev => ({
       ...prev,
       transport: { ...prev.transport, [field]: value }
     }));
   };
 
-  const updateEnergy = (field: keyof LifestyleData['energy'], value: any) => {
+  const updateEnergy = (field: keyof LifestyleData['energy'], value: unknown) => {
     setFormData(prev => ({
       ...prev,
       energy: { ...prev.energy, [field]: value }
@@ -95,7 +95,7 @@ export function Simulator() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-           {Object.entries(results.breakdown).map(([category, value]) => (
+           {Object.entries(results.breakdown).map(([category, value]: [string, unknown]) => (
              <Card key={category} className="border-neutral-100 shadow-sm rounded-2xl">
                <CardContent className="p-5">
                  <div className="flex justify-between items-start mb-3">
@@ -236,7 +236,7 @@ export function Simulator() {
                     ].map((item) => (
                       <div 
                         key={item.id}
-                        onClick={() => setFormData(p => ({ ...p, diet: { type: item.id as any } }))}
+                        onClick={() => setFormData(p => ({ ...p, diet: { type: item.id as "omnivore_daily" | "pescatarian_daily" | "vegetarian_daily" | "vegan_daily" } }))}
                         className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                           formData.diet.type === item.id 
                           ? 'border-primary bg-green-50 ring-2 ring-primary/20' 
