@@ -63,6 +63,16 @@ export interface Habit {
   completed: boolean;
 }
 
+export interface Activity {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+
 export interface CarbonData {
   total: number;
   budget: number;

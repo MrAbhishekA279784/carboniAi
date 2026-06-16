@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../ui/button';
 
 export const NotificationsPopover: React.FC = React.memo(() => {
-  const { notifications, markNotificationRead } = useAppStore();
+  const notifications = useAppStore(s => s.notifications);
+  const markNotificationRead = useAppStore(s => s.markNotificationRead);
   const [isOpen, setIsOpen] = useState(false);
   
   const unreadCount = notifications.filter(n => !n.read).length;

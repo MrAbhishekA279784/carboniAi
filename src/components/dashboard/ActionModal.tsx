@@ -11,7 +11,7 @@ interface ActionModalProps {
 }
 
 export const ActionModal = React.memo(function ActionModal({ action, trigger }: ActionModalProps) {
-  const { completeAction } = useAppStore();
+  const completeAction = useAppStore(s => s.completeAction);
   const [open, setOpen] = useState(false);
 
   const handleComplete = () => {

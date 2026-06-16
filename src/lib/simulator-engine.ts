@@ -45,4 +45,31 @@ export function calculateAnnualFootprint(data: LifestyleData) {
   };
 }
 
+export function simulateScenario(profile: UserProfile, scenario: any) {
+  const baseCalculations = calculateAnnualFootprint({
+    transport: {
+      carKmPerWeek: profile.commuteDistance || 0,
+      carType: (profile.transportMode === 'car' ? (profile.fuelType === 'electric' ? 'car_ev' : 'car_petrol') : 'car_petrol') as any,
+      publicTransportKmPerWeek: profile.transportMode === 'public' ? 50 : 0,
+      flightsPerHourPerYear: 0,
+    },
+    energy: {
+      electricityKwhPerMonth: profile.electricityUsage || 0,
+      acHoursPerDay: profile.acUsage || 0,
+    },
+    diet: {
+      type: (profile.foodPreference === 'vegan' ? 'vegan_daily' : profile.foodPreference === 'vegetarian' ? 'vegetarian_daily' : 'omnivore_daily') as any,
+    }
+  });
+
+  return {
+    original: baseCalculations,
+    simulated: {
+      ...baseCalculations,
+      total: Math.round(baseCalculations.total * (1 - (scenario.reduction || 0.1))),
+    }
+  };
+}
+
+
 

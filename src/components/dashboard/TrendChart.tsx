@@ -2,14 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardContent } from "../ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ChevronRight } from "lucide-react";
-import { CarbonData, EcoAction, UserMission, UserHabit, ActivityLog } from "../../types";
+import { CarbonData, ActionItem, Mission, Habit, Activity } from "../../types";
 
 interface TrendChartProps {
   carbonData: CarbonData;
-  actions: EcoAction[];
-  missions: UserMission[] | null;
-  habits: UserHabit[] | null;
-  activities: ActivityLog[] | null;
+  actions: ActionItem[];
+  missions: Mission[] | null;
+  habits: Habit[] | null;
+  activities: Activity[] | null;
 }
 
 export const TrendChart: React.FC<TrendChartProps> = ({ carbonData, actions, missions, habits, activities }) => {

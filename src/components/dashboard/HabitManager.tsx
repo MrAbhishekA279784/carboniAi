@@ -19,7 +19,9 @@ const AVAILABLE_HABITS = [
 ];
 
 export const HabitManager = React.memo(function HabitManager() {
-  const { habits, addHabit, removeHabit } = useAppStore();
+  const habits = useAppStore(s => s.habits);
+  const addHabit = useAppStore(s => s.addHabit);
+  const removeHabit = useAppStore(s => s.removeHabit);
   const [open, setOpen] = useState(false);
 
   return (

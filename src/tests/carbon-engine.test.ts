@@ -19,6 +19,7 @@ const baseProfile: UserProfile = {
   xp: 0,
   ecoPoints: 0,
   streak: 0,
+  completedOnboarding: false,
 };
 
 describe('calculateFootprint — Transport', () => {

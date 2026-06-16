@@ -8,7 +8,7 @@ const baseProfile: UserProfile = {
   transportMode: 'Car', fuelType: 'Petrol', commuteDistance: 10,
   electricityUsage: 200, acUsage: 4,
   foodPreference: 'Omnivore', shoppingHabits: 'Monthly', wasteHabits: 'Recycling',
-  level: 1, xp: 0, ecoPoints: 0, streak: 0,
+  level: 1, xp: 0, ecoPoints: 0, streak: 0, completedOnboarding: false,
 };
 
 // ─── EMISSION_FACTORS Integrity ───────────────────────────────────────────────

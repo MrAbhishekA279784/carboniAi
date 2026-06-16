@@ -50,7 +50,7 @@ interface AppState {
   removeHabit: (id: string) => Promise<void>;
   setReductionGoal: (goal: number) => Promise<void>;
   completeMission: (id: string) => Promise<void>;
-  addActivity: (type: 'action' | 'mission' | 'habit', title: string, description: string, metadata?: Record<string, unknown>) => Promise<void>;
+  addActivity: (type: 'action' | 'mission' | 'habit' | 'profile' | 'badge' | 'level', title: string, description: string, metadata?: Record<string, unknown>) => Promise<void>;
   addNotification: (title: string, message: string, link?: string) => Promise<void>;
   markNotificationRead: (id: string) => Promise<void>;
   addXPEcoPoints: (xpGain: number, ecoPointsGain: number) => Promise<void>;

@@ -4,7 +4,7 @@ import { handleFirestoreError, OperationType } from '../lib/firestore-utils';
 describe('firestore-utils', () => {
   it('logs errors safely', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => handleFirestoreError(new Error('test'), OperationType.READ, 'path')).toThrow();
+    expect(() => handleFirestoreError(new Error('test'), OperationType.GET, 'path')).toThrow();
     consoleSpy.mockRestore();
   });
 });

@@ -30,7 +30,9 @@ const onboardingSchema = z.object({
 export function Onboarding() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const { setUser, setOnboardingComplete, isLoading } = useAppStore();
+  const setUser = useAppStore(s => s.setUser);
+  const setOnboardingComplete = useAppStore(s => s.setOnboardingComplete);
+  const isLoading = useAppStore(s => s.isLoading);
 
   const form = useForm<z.infer<typeof onboardingSchema>>({
     resolver: zodResolver(onboardingSchema),
