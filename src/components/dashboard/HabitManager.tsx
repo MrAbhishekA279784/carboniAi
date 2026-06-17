@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../store';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Button } from '../ui/button';
-import { Plus, Check, PlusCircle, Trash2, X } from 'lucide-react';
+import { Plus, PlusCircle, Trash2, } from 'lucide-react';
 
 const AVAILABLE_HABITS = [
   { id: 'h1', title: 'Used Reusable Bag', icon: '🛍️' },

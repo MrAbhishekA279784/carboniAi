@@ -299,7 +299,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   checkAchievements: async () => {
-    const { carbonData, achievements, user } = get();
+    const { carbonData, achievements } = get();
     const baseline = 350;
     const historyValues = carbonData.history || [];
     const totalSpent = historyValues.reduce((sum, h) => sum + h.value, 0);

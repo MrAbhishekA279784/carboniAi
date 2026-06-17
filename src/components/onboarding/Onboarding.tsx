@@ -7,7 +7,6 @@ import * as z from "zod";
 import { useAppStore } from "../../store";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Slider } from "../ui/slider";
 import { Label } from "../ui/label";
 import { ChevronLeft } from "lucide-react";

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "../components/ui/card";
-import { ChevronLeft, Edit2, Train, Leaf, Sparkles, TrendingDown, Plus, Trash2 } from "lucide-react";
+import { ChevronLeft, Edit2, Train, Sparkles, TrendingDown, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
@@ -10,6 +10,7 @@ import { db, auth } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firestore-utils';
 import { safeDivide } from '../lib/utils';
+import { MIN_DAYS_PER_WEEK, MAX_DAYS_PER_WEEK, WEEKS_PER_MONTH } from '../lib/constants';
 
 interface Scenario {
   id: string;
@@ -43,19 +44,27 @@ export function WhatIfSimulator() {
 
   const currentFootprint = carbonData.total || 210;
   
-  const calculateTotalReduction = () => {
-    return Math.round(
-      scenarios.reduce((sum, s) => {
-        const days = Math.max(1, Math.min(7, s.daysAWeek || 1));
-        const reduction = Math.max(0, s.baseReductionPerDay || 0);
-        return sum + (reduction * days * 4);
-      }, 0)
-    );
-  };
-  
-  const reductionValue = calculateTotalReduction();
-  const newFootprint = Math.max(0, currentFootprint - reductionValue);
-  const reductionPercent = Math.round(safeDivide(reductionValue, currentFootprint) * 100);
+  const reductionValue = useMemo(
+    () =>
+      Math.round(
+        scenarios.reduce((sum, s) => {
+          const days = Math.max(MIN_DAYS_PER_WEEK, Math.min(MAX_DAYS_PER_WEEK, s.daysAWeek || 1));
+          const reduction = Math.max(0, s.baseReductionPerDay || 0);
+          return sum + reduction * days * WEEKS_PER_MONTH;
+        }, 0)
+      ),
+    [scenarios]
+  );
+
+  const newFootprint = useMemo(
+    () => Math.max(0, currentFootprint - reductionValue),
+    [currentFootprint, reductionValue]
+  );
+
+  const reductionPercent = useMemo(
+    () => Math.round(safeDivide(reductionValue, currentFootprint) * 100),
+    [reductionValue, currentFootprint]
+  );
 
   const handleRunSimulation = async () => {
     setIsCalculating(true);
@@ -160,10 +169,10 @@ export function WhatIfSimulator() {
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => { setEditingScenario(scenario); setEditModalOpen(true); }} className="text-neutral-400 hover:text-primary">
+                    <Button variant="ghost" size="icon" onClick={() => { setEditingScenario(scenario); setEditModalOpen(true); }} className="text-neutral-400 hover:text-primary" aria-label={`Edit scenario: ${scenario.title}`}>
                       <Edit2 size={18} />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => removeScenario(scenario.id)} className="text-neutral-400 hover:text-red-500">
+                    <Button variant="ghost" size="icon" onClick={() => removeScenario(scenario.id)} className="text-neutral-400 hover:text-red-500" aria-label={`Remove scenario: ${scenario.title}`}>
                       <Trash2 size={18} />
                     </Button>
                   </div>
@@ -253,8 +262,10 @@ export function WhatIfSimulator() {
           {editingScenario && (
             <form onSubmit={handleSaveScenario} className="space-y-4">
                <div>
-                  <label className="text-sm font-bold text-neutral-700 mb-1 block">Scenario Template</label>
+                  <label htmlFor="scenario-template" className="text-sm font-bold text-neutral-700 mb-1 block">Scenario Template</label>
                   <select 
+                    id="scenario-template"
+                    aria-label="Select scenario template"
                     className="w-full p-2 border rounded-xl"
                     value={editingScenario.title}
                     onChange={(e) => {
@@ -268,9 +279,11 @@ export function WhatIfSimulator() {
                   </select>
                </div>
                <div>
-                 <label className="text-sm font-bold text-neutral-700 mb-1 block">Days a Week (1 - 7)</label>
+                 <label htmlFor="days-per-week" className="text-sm font-bold text-neutral-700 mb-1 block">Days a Week (1 - 7)</label>
                  <input 
+                   id="days-per-week"
                    type="number" min="1" max="7" 
+                   aria-describedby={editingScenario.daysAWeek < 1 || editingScenario.daysAWeek > 7 ? "days-error" : undefined}
                    value={editingScenario.daysAWeek} 
                    onChange={(e) => {
                      const val = parseInt(e.target.value);
@@ -279,7 +292,7 @@ export function WhatIfSimulator() {
                    className="w-full p-2 border rounded-xl"
                  />
                  {(editingScenario.daysAWeek < 1 || editingScenario.daysAWeek > 7) && (
-                   <p className="text-xs text-red-500 mt-1 font-semibold">Value must be between 1 and 7 (will clamp on save).</p>
+                   <p id="days-error" className="text-xs text-red-500 mt-1 font-semibold" role="alert">Value must be between 1 and 7 (will clamp on save).</p>
                  )}
                </div>
                <Button type="submit" className="w-full h-12 font-bold rounded-xl">Save Scenario</Button>

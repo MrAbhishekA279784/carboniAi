@@ -1,6 +1,6 @@
 import { ActionItem, UserProfile, CarbonCategory } from "../types";
 
-export function generateRecommendations(profile: UserProfile, currentFootprint: Record<CarbonCategory, number>): ActionItem[] {
+export function generateRecommendations(profile: UserProfile, _currentFootprint: Record<CarbonCategory, number>): ActionItem[] {
   const recommendations: ActionItem[] = [];
 
   if (profile.transportMode === 'Car' || profile.transportMode === 'Motorcycle') {

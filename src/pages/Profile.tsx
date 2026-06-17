@@ -1,14 +1,13 @@
 import { useAppStore } from "../store";
-import { Card, CardContent } from "../components/ui/card";
-import { User, Clock, Settings, HelpCircle, ChevronRight, Leaf, Target, Zap, Trophy, BarChart2, MessageCircle } from "lucide-react";
+import { Card } from "../components/ui/card";
+import { User, Clock, Settings, HelpCircle, ChevronRight, Leaf, Target, Zap, Trophy, BarChart2, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ProfileEditModal, HelpSupportModal } from '../components/profile/ProfileModals';
 import { carbonEquivalency } from "../lib/utils";
 
 export function Profile() {
   const user = useAppStore(s => s.user);
-  const carbonData = useAppStore(s => s.carbonData);
-  const missions = useAppStore(s => s.missions);
+    const missions = useAppStore(s => s.missions);
   const actions = useAppStore(s => s.actions);
   const habits = useAppStore(s => s.habits);
   const navigate = useNavigate();

@@ -3,7 +3,6 @@ import { useAppStore } from '../../store';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { ChevronRight } from 'lucide-react';
-import { UserProfile } from '../../types';
 
 export function ProfileEditModal({ trigger }: { trigger: React.ReactElement }) {
   const user = useAppStore(s => s.user);

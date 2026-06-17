@@ -10,3 +10,24 @@ export const CATEGORY_ICONS: Record<string, React.ComponentType<{ size?: number;
   "Shopping": ShoppingBag,
   "Waste": Droplet,
 };
+
+// Gamification constants
+export const XP_PER_HABIT = 5;
+export const XP_PER_ACTION = 15;
+export const XP_PER_MISSION = 100;
+export const ECOPOINTS_PER_HABIT = 5;
+export const ECOPOINTS_PER_ACTION = 20;
+
+// Carbon budget defaults
+export const DEFAULT_CARBON_BUDGET_KG = 300;
+
+// Pagination limits
+export const LEADERBOARD_PAGE_SIZE = 20;
+export const ACTIVITIES_FETCH_LIMIT = 50;
+export const NOTIFICATIONS_FETCH_LIMIT = 50;
+
+// Simulator constraints
+export const MIN_DAYS_PER_WEEK = 1;
+export const MAX_DAYS_PER_WEEK = 7;
+export const WEEKS_PER_MONTH = 4;
+

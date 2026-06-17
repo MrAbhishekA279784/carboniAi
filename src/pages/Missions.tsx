@@ -3,7 +3,7 @@ import { useAppStore } from "../store";
 import { Card, CardContent } from "../components/ui/card";
 import { Train, Zap, Home, Trophy, CheckCircle2, Lock, Share2 } from "lucide-react";
 import { Progress } from "../components/ui/progress";
-import { motion } from "motion/react";
+
 import { Button } from "../components/ui/button";
 
 export function Missions() {
@@ -100,7 +100,7 @@ export function Missions() {
         {/* Missions List */}
         {(activeTab === 'active' || activeTab === 'completed') && (
           <div className="space-y-4">
-            {(activeTab === 'active' ? activeMissions : completedMissions).map((miss, i) => {
+            {(activeTab === 'active' ? activeMissions : completedMissions).map((miss, _i) => {
               const Icon = miss.category === 'Transport' ? Train : miss.category === 'Home Energy' ? Zap : Home;
               return (
                 <Card key={miss.id} className="border-neutral-100 shadow-sm rounded-2xl relative overflow-hidden">
@@ -138,6 +138,7 @@ export function Missions() {
                             variant="ghost" 
                             size="icon" 
                             className="h-6 w-6 rounded-full text-neutral-400 hover:text-primary hover:bg-primary/5"
+                            aria-label={`Share ${miss.title}`}
                             onClick={() => handleShare(miss.title, `${miss.target}kg`, "mission")}
                           >
                             <Share2 size={12} />

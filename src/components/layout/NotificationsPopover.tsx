@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store';
-import { Bell, X, Check, Clock, ExternalLink } from 'lucide-react';
+import { Bell, Check, Clock, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../ui/button';
 
@@ -13,15 +13,16 @@ export const NotificationsPopover: React.FC = React.memo(() => {
 
   return (
     <div className="relative">
-      <div 
+      <button 
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Notifications"
         className="w-10 h-10 rounded-full border-2 border-neutral-100 flex items-center justify-center relative cursor-pointer hover:bg-neutral-50 shadow-sm bg-white transition-all"
       >
         {unreadCount > 0 && (
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
         )}
         <Bell size={20} className={unreadCount > 0 ? "text-neutral-900" : "text-neutral-400"} />
-      </div>
+      </button>
 
       <AnimatePresence>
         {isOpen && (

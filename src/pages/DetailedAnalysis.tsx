@@ -1,7 +1,7 @@
 import { useAppStore } from "../store";
 import { Card, CardContent } from "../components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { ChevronLeft, Bus, Zap, Leaf, ShoppingBag, Droplet } from "lucide-react";
+import { ChevronLeft, Leaf } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { COLORS, CATEGORY_ICONS } from "../lib/constants";

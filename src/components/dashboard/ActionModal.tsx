@@ -3,7 +3,7 @@ import { useAppStore } from '../../store';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { ActionItem } from '../../types';
-import { CheckCircle, Leaf, Zap, AlertCircle, Clock, Info } from 'lucide-react';
+import { CheckCircle, Leaf, AlertCircle, Clock, Info } from 'lucide-react';
 
 interface ActionModalProps {
   action: ActionItem;

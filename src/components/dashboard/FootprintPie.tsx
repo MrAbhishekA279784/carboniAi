@@ -10,7 +10,7 @@ interface FootprintPieProps {
   carbonData: CarbonData;
 }
 
-export const FootprintPie: React.FC<FootprintPieProps> = ({ carbonData }) => {
+export const FootprintPie: React.FC<FootprintPieProps> = React.memo(({ carbonData }) => {
   const navigate = useNavigate();
   const pieData = Object.entries(carbonData.breakdown)
     .map(([name, value]) => ({ name, value }))
@@ -24,7 +24,11 @@ export const FootprintPie: React.FC<FootprintPieProps> = ({ carbonData }) => {
         </div>
         
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="relative w-[160px] h-[160px] flex-shrink-0">
+          <div
+            role="img"
+            aria-label={`Carbon footprint breakdown: ${pieData.map(d => `${d.name} ${d.value} kg`).join(', ')}`}
+            className="relative w-[160px] h-[160px] flex-shrink-0"
+          >
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -35,7 +39,7 @@ export const FootprintPie: React.FC<FootprintPieProps> = ({ carbonData }) => {
                   dataKey="value"
                   stroke="none"
                 >
-                  {pieData.map((entry, index) => (
+                  {pieData.map((_entry, index) => (
                     <Cell key={"cell-" + index} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -80,4 +84,4 @@ export const FootprintPie: React.FC<FootprintPieProps> = ({ carbonData }) => {
       </CardContent>
     </Card>
   );
-};
+});

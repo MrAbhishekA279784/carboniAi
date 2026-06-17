@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "../components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { ArrowDown, Leaf, Bus, ChevronDown, Search, Loader2, Globe, Sparkles } from "lucide-react";
+import { ArrowDown, Bus, ChevronDown, Search, Loader2, Globe, Sparkles } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { motion } from "motion/react";

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Train, Lightbulb, MoreVertical, Maximize2, RefreshCw, Leaf } from "lucide-react";
-import { Button } from "../ui/button";
+import { Send, Sparkles, Train, Leaf, MoreVertical, Maximize2 } from "lucide-react";
 import { useAppStore } from "../../store";
 import { Link } from "react-router-dom";
 
@@ -58,7 +57,7 @@ export function AIContextAgent() {
         role: "ai",
         content: data.text
       }]);
-    } catch (err) {
+    } catch (_err) {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: "ai",

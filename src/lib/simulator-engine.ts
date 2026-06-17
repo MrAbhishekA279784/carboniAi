@@ -1,4 +1,4 @@
-import { UserProfile } from "../types";
+import { UserProfile, TransportCarType, FoodDietType, ScenarioReductionResult } from "../types";
 import { EMISSION_FACTORS } from "./emission-factors";
 
 export interface LifestyleData {
@@ -41,16 +41,39 @@ export function calculateAnnualFootprint(data: LifestyleData) {
   return {
     total,
     breakdown,
-    monthlyAverage: Math.round(total / 12)
+    monthlyAverage: Math.round(total / 12),
   };
 }
 
-export function simulateScenario(profile: UserProfile, scenario: any) {
+function resolveCarType(transportMode: string, fuelType: string): TransportCarType {
+  if (transportMode.toLowerCase() === 'car') {
+    if (fuelType.toLowerCase() === 'electric') return 'car_ev';
+    if (fuelType.toLowerCase() === 'diesel') return 'car_diesel';
+    return 'car_petrol';
+  }
+  return 'bus';
+}
+
+function resolveDietType(foodPreference: string): FoodDietType {
+  const pref = foodPreference.toLowerCase();
+  if (pref === 'vegan') return 'vegan_daily';
+  if (pref === 'vegetarian') return 'vegetarian_daily';
+  if (pref === 'pescatarian') return 'pescatarian_daily';
+  return 'omnivore_daily';
+}
+
+export function simulateScenario(
+  profile: UserProfile,
+  scenario: { reduction?: number }
+): ScenarioReductionResult {
+  const carType = resolveCarType(profile.transportMode, profile.fuelType);
+  const dietType = resolveDietType(profile.foodPreference);
+
   const baseCalculations = calculateAnnualFootprint({
     transport: {
       carKmPerWeek: profile.commuteDistance || 0,
-      carType: (profile.transportMode === 'car' ? (profile.fuelType === 'electric' ? 'car_ev' : 'car_petrol') : 'car_petrol') as any,
-      publicTransportKmPerWeek: profile.transportMode === 'public' ? 50 : 0,
+      carType,
+      publicTransportKmPerWeek: profile.transportMode.toLowerCase() === 'public' ? 50 : 0,
       flightsPerHourPerYear: 0,
     },
     energy: {
@@ -58,8 +81,8 @@ export function simulateScenario(profile: UserProfile, scenario: any) {
       acHoursPerDay: profile.acUsage || 0,
     },
     diet: {
-      type: (profile.foodPreference === 'vegan' ? 'vegan_daily' : profile.foodPreference === 'vegetarian' ? 'vegetarian_daily' : 'omnivore_daily') as any,
-    }
+      type: dietType,
+    },
   });
 
   return {
@@ -67,9 +90,6 @@ export function simulateScenario(profile: UserProfile, scenario: any) {
     simulated: {
       ...baseCalculations,
       total: Math.round(baseCalculations.total * (1 - (scenario.reduction || 0.1))),
-    }
+    },
   };
 }
-
-
-

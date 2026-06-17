@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useAppStore } from "../store";
-import { Card, CardContent } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { ScrollArea } from "../components/ui/scroll-area";
+
 import { Send, Bot, User, RefreshCw, ChevronLeft, Sparkles, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import Markdown from "react-markdown";
 
 interface Message {
@@ -57,9 +56,6 @@ export function Chat() {
         }),
       });
 
-      console.log("[Chat] response status:", response.status, "ok:", response.ok);
-      const contentType = response.headers.get("content-type");
-      console.log("[Chat] response content-type:", contentType);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -68,7 +64,7 @@ export function Chat() {
       }
 
       const data = await response.json();
-      console.log("[Chat] response data keys:", Object.keys(data));
+
       if (data.text) {
         setMessages(prev => [...prev, { role: 'assistant', content: data.text }]);
       } else {
@@ -190,6 +186,8 @@ export function Chat() {
       <div className="p-4 border-t border-neutral-100 bg-white sticky bottom-0">
         <div className="relative max-w-2xl mx-auto">
           <Input 
+            id="chat-input"
+            aria-label="Ask EcoAgent a sustainability question"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
@@ -199,6 +197,7 @@ export function Chat() {
           <Button 
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
+            aria-label="Send message"
             className="absolute right-2 top-2 h-10 w-10 rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 p-0"
           >
             <Send size={18} />

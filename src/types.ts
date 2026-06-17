@@ -138,3 +138,28 @@ export const DEFAULT_HABITS: Habit[] = [
   { id: 'h4', title: 'Used Public Transport', icon: '🚌', completed: false },
   { id: 'h5', title: 'Ate Plant-Based', icon: '🥗', completed: false },
 ];
+
+// Simulator types — replaces `any` in simulator-engine.ts
+export type TransportCarType = 'car_petrol' | 'car_diesel' | 'car_ev' | 'bus' | 'metro' | 'cycling' | 'walking';
+export type FoodDietType = 'omnivore_daily' | 'vegetarian_daily' | 'vegan_daily' | 'pescatarian_daily';
+
+export interface SimulationScenario {
+  id: string;
+  title: string;
+  daysAWeek: number;
+  type: 'Transport' | 'Diet' | 'Energy' | 'Shopping';
+  baseReductionPerDay: number;
+}
+
+export interface ScenarioReductionResult {
+  original: {
+    total: number;
+    breakdown: { Transport: number; Energy: number; Food: number };
+    monthlyAverage: number;
+  };
+  simulated: {
+    total: number;
+    breakdown: { Transport: number; Energy: number; Food: number };
+    monthlyAverage: number;
+  };
+}

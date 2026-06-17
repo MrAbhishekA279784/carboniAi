@@ -12,7 +12,7 @@ interface TrendChartProps {
   activities: Activity[] | null;
 }
 
-export const TrendChart: React.FC<TrendChartProps> = ({ carbonData, actions, missions, habits, activities }) => {
+export const TrendChart: React.FC<TrendChartProps> = React.memo(({ carbonData, actions, missions, habits, activities }) => {
   const [trendTimeframe, setTrendTimeframe] = useState<'Day' | 'Week' | 'Month' | '6 Months' | 'Year'>('6 Months');
   const [trendFilterOpen, setTrendFilterOpen] = useState(false);
 
@@ -204,7 +204,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ carbonData, actions, mis
             </div>
         </div>
         
-        <div className="h-[180px] w-full mb-4">
+        <div 
+          role="img"
+          aria-label={`Carbon footprint trend chart showing data over ${trendTimeframe}`}
+          className="h-[180px] w-full mb-4"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
@@ -226,4 +230,4 @@ export const TrendChart: React.FC<TrendChartProps> = ({ carbonData, actions, mis
       </CardContent>
     </Card>
   );
-};
+});

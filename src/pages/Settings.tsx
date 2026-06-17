@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../components/auth/AuthContext';
 import { useAppStore } from '../store';
-import { Card, CardContent } from '../components/ui/card';
+import { Card, } from '../components/ui/card';
 import { LogOut, User, Shield, Bell, Trash2, ChevronRight, Globe } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { ProfileEditModal } from '../components/profile/ProfileModals';

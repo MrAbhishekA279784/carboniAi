@@ -1,6 +1,6 @@
 import { Mission, UserProfile } from "../types";
 
-export function generateWeeklyMissions(profile: UserProfile): Mission[] {
+export function generateWeeklyMissions(_profile: UserProfile): Mission[] {
   return [
     { 
       id: 'm1', 

@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect } from "react";
 import { useAppStore } from "../store";
 import { Card, CardContent } from "../components/ui/card";
 import { Progress } from "../components/ui/progress";
 // Recharts imports extracted to sub-components
-import { Leaf, ArrowDownToLine, Zap, Bus, ShoppingBag, Droplet, ChevronRight, Loader2, Download, Check, Bell } from "lucide-react";
+import { Leaf, ArrowDownToLine, ChevronRight, Loader2, Download, Check } from "lucide-react";
 import { generatePDFReport } from "../lib/report-generator";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import { FootprintPie } from "../components/dashboard/FootprintPie";
 import { TrendChart } from "../components/dashboard/TrendChart";
 import { carbonEquivalency } from "../lib/utils";
 
-import { COLORS, CATEGORY_ICONS } from "../lib/constants";
+import { CATEGORY_ICONS } from "../lib/constants";
 
 export function Dashboard() {
   const user = useAppStore(s => s.user);
@@ -31,17 +31,16 @@ export function Dashboard() {
   const navigate = useNavigate();
 
 
-
+  const hasOnboarded = user.completedOnboarding;
   useEffect(() => {
+    if (!hasOnboarded) return;
     const initData = async () => {
-      if (user.completedOnboarding) {
-        await updateCarbonData();
-        await fetchRecommendations();
-        await fetchMissions();
-      }
-    }
-    initData();
-  }, []);
+      await updateCarbonData();
+      await fetchRecommendations();
+      await fetchMissions();
+    };
+    void initData();
+  }, [hasOnboarded, updateCarbonData, fetchRecommendations, fetchMissions]);
 
 
 
@@ -82,6 +81,7 @@ export function Dashboard() {
                size="icon" 
                className="md:hidden rounded-full border-neutral-200 text-neutral-600 font-bold h-9 w-9"
                onClick={() => generatePDFReport(user, carbonData)}
+               aria-label="Download report"
             >
               <Download size={14} />
             </Button>

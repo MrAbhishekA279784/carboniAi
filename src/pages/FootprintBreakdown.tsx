@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useAppStore } from "../store";
-import { Card, CardContent } from "../components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { ChevronLeft, ChevronDown, Bus, Zap, Leaf, ShoppingBag, Droplet, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronDown, Leaf, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 
@@ -85,7 +84,7 @@ export function FootprintBreakdown() {
                 dataKey="value"
                 stroke="none"
               >
-                {pieData.map((entry, index) => (
+                {pieData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

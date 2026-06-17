@@ -11,7 +11,7 @@ export function ActionPlan() {
   const actions = useAppStore(s => s.actions);
   const carbonData = useAppStore(s => s.carbonData);
   const setReductionGoal = useAppStore(s => s.setReductionGoal);
-  const completeAction = useAppStore(s => s.completeAction);
+  
   const habits = useAppStore(s => s.habits);
   const toggleHabit = useAppStore(s => s.toggleHabit);
   const [loadingMore, setLoadingMore] = useState(false);
