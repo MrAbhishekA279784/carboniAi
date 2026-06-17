@@ -4,7 +4,7 @@ import { UserProfile, CarbonData } from '../types';
 import axios from 'axios';
 
 vi.mock('axios');
-const mockedAxios = vi.mocked(axios);
+
 
 describe('gemini-client', () => {
   const dummyUser = {} as UserProfile;

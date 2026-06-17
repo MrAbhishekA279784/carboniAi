@@ -89,8 +89,8 @@ export function AIContextAgent() {
           </div>
         </div>
         <div className="flex space-x-1 text-neutral-400">
-          <button className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"><MoreVertical size={16} /></button>
-          <button className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"><Maximize2 size={16} /></button>
+          <button aria-label="More options" className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"><MoreVertical size={16} /></button>
+          <button aria-label="Maximize chat" className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"><Maximize2 size={16} /></button>
         </div>
       </div>
 
@@ -172,6 +172,7 @@ export function AIContextAgent() {
             className="w-full bg-neutral-50 border border-neutral-200 rounded-full pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-neutral-400"
           />
           <button 
+             aria-label="Send message"
              onClick={() => handleSend()}
              disabled={!input.trim() || isTyping}
              className="absolute right-2 p-2 rounded-full text-neutral-400 hover:text-primary hover:bg-primary/5 disabled:opacity-50 transition-colors"

@@ -16,8 +16,11 @@ export default defineConfig(() => {
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
-            ui: ['recharts', 'lucide-react', 'framer-motion', 'clsx', 'tailwind-merge'],
             firebase: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+            ui: ['clsx', 'tailwind-merge'],
+            icons: ['lucide-react'],
+            charts: ['recharts'],
+            animations: ['motion']
           }
         }
       }
